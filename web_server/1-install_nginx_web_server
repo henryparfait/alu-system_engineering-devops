@@ -14,7 +14,7 @@ sudo ufw allow 'Nginx HTTP'
 sudo service nginx start
 
 # Create the expected content
-echo "Holberton School" | sudo tee /var/www/html/index.html
+echo "Holberton School for the win!" | sudo tee /var/www/html/index.html
 
 # Reload Nginx to apply changes
 sudo service nginx reload
