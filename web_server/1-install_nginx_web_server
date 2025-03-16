@@ -1,20 +1,17 @@
 #!/usr/bin/env bash
-# This script installs Nginx, allows HTTP traffic, and configures the default page.
+# This script installs and configures Nginx on an Ubuntu server.
 
-# Update package list
+# Update the package list
 sudo apt-get update -y
 
 # Install Nginx
 sudo apt-get install nginx -y
 
-# Allow Nginx through the firewall
-sudo ufw allow 'Nginx HTTP'
+# Create a custom HTML file for the root page
+echo "Holberton School for the win!" | sudo tee /var/www/html/index.html > /dev/null
 
-# Ensure Nginx is running
-sudo service nginx start
+#Test configuration
+sudo nginx -t || { echo "Nginx configuration error"; exit 1; }
 
-# Create the expected content
-echo "Holberton School" | sudo tee /var/www/html/index.html
-
-# Reload Nginx to apply changes
-sudo service nginx reload
+# Restart Nginx without using systemctl
+sudo service nginx restart
