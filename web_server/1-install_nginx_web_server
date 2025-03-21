@@ -1,17 +1,28 @@
 #!/usr/bin/env bash
-# This script installs and configures Nginx on an Ubuntu server.
 
-# Update the package list
-sudo apt-get update -y
+# Update and install Nginx
+sudo apt-get update
+sudo apt-get install -y nginx
 
-# Install Nginx
-sudo apt-get install nginx -y
+# Configure Nginx to listen on port 80
+sudo sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
+sudo sed -i 's/listen \[::\]:80 default_server;/listen \[::\]:80;/g' /etc/nginx/sites-available/default
 
-# Create a custom HTML file for the root page
-echo "Holberton School for the win!" | sudo tee /var/www/html/index.html > /dev/null
-
-#Test configuration
-sudo nginx -t || { echo "Nginx configuration error"; exit 1; }
+# Create a custom HTML page with the required content
+echo "Holberton School for the win!" | sudo tee /var/www/html/index.html
 
 # Restart Nginx without using systemctl
 sudo service nginx restart
+
+# Verify Nginx is running on port 80
+curl -sI localhost | grep "HTTP/1.1 200 OK"
+if [ $? -eq 0 ]; then
+    echo "Nginx is running successfully on port 80."
+else
+    echo "Nginx failed to start on port 80. Check logs in /var/log/nginx/."
+fi
+
+# Display the IP address for external access
+echo "Nginx is accessible at:"
+curl -s ifconfig.me
+echo ""
