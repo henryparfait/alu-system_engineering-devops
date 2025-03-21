@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#The script configures a new Ubuntu machine to make redirectirection 
+apt-get update
+apt-get install -y nginx
+
 # Configure Nginx to redirect /redirect_me to a new location
 cat <<EOF | sudo tee /etc/nginx/sites-available/default > /dev/null
 server {
