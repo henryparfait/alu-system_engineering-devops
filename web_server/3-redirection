@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # Configure Nginx to redirect /redirect_me to a new location
 sudo bash -c 'cat > /etc/nginx/sites-available/default <<EOF
 server {
