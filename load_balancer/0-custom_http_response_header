@@ -1,17 +1,47 @@
 #!/usr/bin/env bash
-#Installing Nginx and configuring it
-sudo apt update -y # update package manager to get latest updates when installing ngi..
-sudo apt install nginx -y # instal nginx
-new_config=\
-"server {
-	listen 80 default_server;
-	listen [::]:80 default_server;
-		root /var/www/html;
-	index index.html index.html index.nginx-debian.html;
-	server_name _;
-	add_header X-Served-By $HOSTNAME;
+# This script configures a new Ubuntu machine to add a custom HTTP response header (X-Served-By) with the server's hostname.
+
+# Update and install Nginx
+apt-get update
+apt-get install -y nginx
+
+# Get the server's hostname
+HOSTNAME=$(hostname)
+
+# Configure Nginx to add the custom header
+cat <<EOF | sudo tee /etc/nginx/sites-available/default > /dev/null
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html index.htm;
+
+    server_name _;
+
+    location / {
+        try_files \$uri \$uri/ =404;
+        add_header X-Served-By \$HOSTNAME;
+    }
 }
-"
-sudo chown -R "$USER":"$USER" /etc/nginx/sites-available/default # change ownership
-echo "$new_config" > /etc/nginx/sites-available/default # overwrite the existing configuration
-sudo service nginx restart # restart the nginx
+EOF
+
+# Test the Nginx configuration
+if ! sudo nginx -t; then
+    echo "Nginx configuration test failed. Check the configuration file."
+    exit 1
+fi
+
+# Restart Nginx to apply the changes
+if ! sudo service nginx restart; then
+    echo "Failed to restart Nginx. Check the logs for errors."
+    exit 1
+fi
+
+# Verify the custom header
+if ! curl -sI localhost | grep -q "X-Served-By: $HOSTNAME"; then
+    echo "Custom header test failed. Check the Nginx configuration."
+    exit 1
+fi
+
+echo "Custom HTTP response header configured successfully."
