@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Configure Nginx to redirect /redirect_me to a new location
-sudo bash -c 'cat > /etc/nginx/sites-available/default <<EOF
+cat <<EOF | sudo tee /etc/nginx/sites-available/default > /dev/null
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -18,13 +18,23 @@ server {
         return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
     }
 }
-EOF'
+EOF
 
 # Test the Nginx configuration
-sudo nginx -t
+if ! sudo nginx -t; then
+	echo "Nginx configuration test failed. Check the configuration file."
+	exit 1
+fi
 
 # Restart Nginx to apply the changes
-sudo service nginx restart
+if ! sudo service nginx restart; then
+	echo "Failed to restart Nginx. Check the logs for errors."
+fi
 
 # Verify the redirection
-curl -sI localhost/redirect_me
+if ! curl -sI localhost/redirect_me | grep -q "301 Moved Permanently"; then
+    echo "Redirection test failed. Check the Nginx configuration."
+    exit 1
+fi
+
+echo "Redirection configured successfully."
