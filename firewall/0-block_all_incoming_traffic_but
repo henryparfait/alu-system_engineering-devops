@@ -4,9 +4,12 @@
 sudo apt update
 sudo apt install ufw -y
 
+# Reset UFW to default settings (optional, but ensures a clean start)
+sudo ufw reset --force
+
 # Set default policies
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
+sudo ufw default deny incoming  # Block all incoming traffic
+sudo ufw default allow outgoing # Allow all outgoing traffic
 
 # Allow necessary ports
 sudo ufw allow 22/tcp  # SSH
@@ -17,17 +20,22 @@ sudo ufw allow 443/tcp # HTTPS
 sudo ufw enable
 
 # Display UFW status to verify rules
+echo "UFW Status:"
 sudo ufw status verbose
 
 # Check UFW service status
-sudo systemctl status ufw
+echo "UFW Service Status:"
+sudo systemctl status ufw --no-pager
 
 # Test connectivity (optional)
 echo "Testing SSH connectivity..."
-ssh -o ConnectTimeout=5 ubuntu@44.201.240.217 echo "SSH connection successful."
+ssh -o ConnectTimeout=5 user@web-01 echo "SSH connection successful."
 
 echo "Testing HTTP connectivity..."
 curl -I http://44.201.240.217
 
 echo "Testing HTTPS connectivity..."
 curl -I https://44.201.240.217
+
+echo "Testing blocked port (e.g., 8080)..."
+curl -I http://44.201.240.217:8080
