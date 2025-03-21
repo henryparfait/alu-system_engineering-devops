@@ -1,8 +1,33 @@
 #!/bin/bash
-sudo apt update && sudo apt install ufw -y
+
+# Update package list and install UFW
+sudo apt update
+sudo apt install ufw -y
+
+# Set default policies
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
-sudo ufw allow 22/tcp
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
+
+# Allow necessary ports
+sudo ufw allow 22/tcp  # SSH
+sudo ufw allow 80/tcp  # HTTP
+sudo ufw allow 443/tcp # HTTPS
+
+# Enable UFW
 sudo ufw enable
+
+# Display UFW status to verify rules
+sudo ufw status verbose
+
+# Check UFW service status
+sudo systemctl status ufw
+
+# Test connectivity (optional)
+echo "Testing SSH connectivity..."
+ssh -o ConnectTimeout=5 user@web-01 echo "SSH connection successful."
+
+echo "Testing HTTP connectivity..."
+curl -I http://web-01
+
+echo "Testing HTTPS connectivity..."
+curl -I https://web-01
