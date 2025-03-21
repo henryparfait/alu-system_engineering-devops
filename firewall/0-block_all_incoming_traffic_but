@@ -24,10 +24,10 @@ sudo systemctl status ufw
 
 # Test connectivity (optional)
 echo "Testing SSH connectivity..."
-ssh -o ConnectTimeout=5 user@web-01 echo "SSH connection successful."
+ssh -o ConnectTimeout=5 ubuntu@44.201.240.217 echo "SSH connection successful."
 
 echo "Testing HTTP connectivity..."
-curl -I http://web-01
+curl -I http://44.201.240.217
 
 echo "Testing HTTPS connectivity..."
-curl -I https://web-01
+curl -I https://44.201.240.217
